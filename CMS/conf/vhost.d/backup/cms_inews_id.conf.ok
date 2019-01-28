@@ -1,0 +1,37 @@
+server {
+        listen 80;
+        server_name cms-1.inews.id;
+	root /mainData/cms/sites/app/webroot/;
+        access_log /var/log/nginx/cms.access.log;
+        error_log /var/log/nginx/cms.error.log;
+        add_header Vary "User-Agent";
+	add_header X-Cache $upstream_cache_status;
+	
+	#return 301 https://$server_name$request_uri;
+
+
+
+        location / {
+#                try_files $uri $uri/ /index.php?$query_string;
+                try_files $uri  /index.php?$query_string;
+#                if ($request_uri ~* index/$){
+#                        rewrite ^/(.*)/index/$ /$1 permanent;
+#                }
+
+
+                location ~* \.php$ {
+                        try_files       $uri $uri/ /index.php;
+                        fastcgi_pass    127.0.0.1:9001;
+                        fastcgi_index   index.php;
+                        fastcgi_param   SCRIPT_FILENAME  $request_filename;
+                        fastcgi_ignore_client_abort on;
+                        include         fastcgi_params;
+                }
+        }
+
+        location /nginx_status {
+                stub_status on;
+#                allow 127.0.0.1;
+#                deny all;
+        }
+}
