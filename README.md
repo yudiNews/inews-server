@@ -1,0 +1,2 @@
+# inews-server
+server inews
